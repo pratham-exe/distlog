@@ -13,7 +13,7 @@ def generate_info_log(node_id, log_level, service_name, message):
         "service_name": service_name,
         "timestamp": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     }
-    print(f"Generated Log: {log}")
+    return log
 
 def generate_warn_log(node_id, log_level, service_name, message):
     response_time_ms = random.randint(100, 1000)
@@ -30,7 +30,7 @@ def generate_warn_log(node_id, log_level, service_name, message):
         "service_name": service_name,
         "timestamp": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     }
-    print(f"Generated Log: {log}")
+    return log
 
 def generate_error_log(node_id, log_level, service_name, message):
     log = {
@@ -46,7 +46,7 @@ def generate_error_log(node_id, log_level, service_name, message):
         "service_name": service_name,
         "timestamp": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     }
-    print(f"Generated Log: {log}")
+    return log
 
 def random_log_level():
     return random.choice(["INFO", "WARN", "ERROR"])

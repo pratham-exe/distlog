@@ -1,8 +1,13 @@
+from log import generate_info_log, random_log_level, generate_registration_log, generate_warn_log, generate_error_log
+from heartbeat import send_heartbeat
 import threading
 import time
 import random
-from log import generate_info_log, random_log_level, generate_registration_log, generate_warn_log, generate_error_log
-from heartbeat import send_heartbeat
+from kafka import KafkaProducer
+import json
+
+producer = KafkaProducer(value_serializer = lambda m: json.dumps(m).encode('ascii'))
+topic = "all-logs"
 
 def main():
     node_id = "node_03"
@@ -19,14 +24,13 @@ def main():
         log_message = f"Sample log message from {node_id}"
         match log_level:
             case "INFO":
-                generate_info_log(node_id, log_level, service_name, log_message)
+                log = generate_info_log(node_id, log_level, service_name, log_message)
             case "WARN":
-                pass
-                generate_warn_log(node_id, log_level, service_name, log_message)
+                log = generate_warn_log(node_id, log_level, service_name, log_message)
             case "ERROR":
-                pass
-                generate_error_log(node_id, log_level, service_name, log_message)
+                log = generate_error_log(node_id, log_level, service_name, log_message)
         time.sleep(random.randint(1, 5))
+        producer.send(topic, log)
 
 if __name__ == "__main__":
     main()
