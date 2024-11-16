@@ -3,19 +3,19 @@ from heartbeat import send_heartbeat
 import threading
 import time
 import random
-from kafka import KafkaProducer
 import json
+import requests
 
-producer = KafkaProducer(value_serializer = lambda m: json.dumps(m).encode('ascii'))
-topic = "all-logs"
+FLUENTD_URL = "http://localhost:9880/log.input"
 
 def main():
     node_id = "node_03"
     service_name = "Service"
 
-    generate_registration_log(node_id, service_name)
+    registration_log = generate_registration_log(node_id, service_name)
+    requests.post(FLUENTD_URL, data=json.dumps(registration_log), headers={'Content-Type': 'application/json'})
 
-    heartbeat_thread = threading.Thread(target=send_heartbeat, args=(node_id,))
+    heartbeat_thread = threading.Thread(target=send_heartbeat, args=(node_id, FLUENTD_URL))
     heartbeat_thread.daemon = True
     heartbeat_thread.start()
 
@@ -29,8 +29,8 @@ def main():
                 log = generate_warn_log(node_id, log_level, service_name, log_message)
             case "ERROR":
                 log = generate_error_log(node_id, log_level, service_name, log_message)
-        time.sleep(random.randint(1, 5))
-        producer.send(topic, log)
+        time.sleep(1)
+        requests.post(FLUENTD_URL, data=json.dumps(log), headers={'Content-Type': 'application/json'})
 
 if __name__ == "__main__":
     main()

@@ -58,4 +58,4 @@ def generate_registration_log(node_id, service_name):
         "service_name": service_name,
         "timestamp": time.strftime("%Y-%m-%d %H:%M:%S")
     }
-    print(f"Generated Registration Log: {registration_log}")
+    return registration_log

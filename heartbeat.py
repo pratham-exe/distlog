@@ -1,6 +1,8 @@
 import time
+import json
+import requests
 
-def send_heartbeat(node_id):
+def send_heartbeat(node_id, url):
     while True:
         heartbeat_message = {
             "node_id": node_id,
@@ -8,5 +10,5 @@ def send_heartbeat(node_id):
             "status": "UP",
             "timestamp": time.strftime("%Y-%m-%d %H:%M:%S")
         }
-        print(f"Heartbeat: {heartbeat_message}")
+        requests.post(url, data=json.dumps(heartbeat_message), headers={'Content-Type': 'application/json'})
         time.sleep(5) 
