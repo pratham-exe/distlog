@@ -4,19 +4,19 @@ import sys
 import time
 import threading
 
-topic_sub = "nodes"
+topic_sub = sys.argv[1]
 consumer = KafkaConsumer(topic_sub, value_deserializer = lambda m: json.loads(m.decode('ascii')))
 producer = KafkaProducer(value_serializer = lambda m: json.dumps(m).encode('ascii'))
 
-topic_pub_1 = "storage"
-topic_pub_2 = "alert"
+topic_pub_1 = sys.argv[2]
+topic_pub_2 = sys.argv[3]
 
 node_heartbeats = {}
-lock = threading.Lock()  # To manage concurrent access to shared data
+lock = threading.Lock()
 
 def monitor_heartbeats():
     while True:
-        time.sleep(7)  # Check every 10 seconds
+        time.sleep(7)
         with lock:
             current_time = time.time()
             for node_id, last_heartbeat in list(node_heartbeats.items()):
@@ -42,8 +42,9 @@ for message in consumer:
         if message_type == "HEARTBEAT":
             node_heartbeats[node_id] = time.time()
     
-    if message_type == "WARN" or message_type == "ERROR":
-        producer.send(topic_pub_2, message)
-        print(message)
+    if 'log_level' in message.value:
+        log_level = message.value['log_level']
+        if log_level == "WARN" or log_level == "ERROR":
+            producer.send(topic_pub_2, message.value)
     
-    producer.send(topic_pub_1, message)
+    producer.send(topic_pub_1, message.value)
