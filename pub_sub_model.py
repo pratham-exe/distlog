@@ -1,4 +1,5 @@
 from kafka import KafkaConsumer, KafkaProducer
+from log import generate_microservice_log
 import json
 import sys
 import time
@@ -16,7 +17,7 @@ lock = threading.Lock()
 
 def monitor_heartbeats():
     while True:
-        time.sleep(7)
+        time.sleep(6)
         with lock:
             current_time = time.time()
             for node_id, last_heartbeat in list(node_heartbeats.items()):
@@ -35,8 +36,10 @@ for message in consumer:
         if message_type == "REGISTRATION":
             registered_nodes.insert(0, node_id)
             node_heartbeats[node_id] = time.time()
-        else:
-            continue
+            reg_log = generate_microservice_log(message.value)
+            producer.send(topic_pub_1, reg_log)
+        continue
+
            
     with lock:
         if message_type == "HEARTBEAT":
@@ -44,7 +47,12 @@ for message in consumer:
     
     if 'log_level' in message.value:
         log_level = message.value['log_level']
-        if log_level == "WARN" or log_level == "ERROR":
+        if log_level == "WARN":
             producer.send(topic_pub_2, message.value)
+        if log_level == 'ERROR':
+            producer.send(topic_pub_2, message.value)
+            dereg_log = generate_microservice_log(message.value)
+            registered_nodes.remove(message.value['node_id'])
+            continue
     
     producer.send(topic_pub_1, message.value)

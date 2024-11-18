@@ -56,6 +56,22 @@ def generate_registration_log(node_id, service_name):
         "node_id": node_id,
         "message_type": "REGISTRATION",
         "service_name": service_name,
-        "timestamp": time.strftime("%Y-%m-%d %H:%M:%S")
+        "timestamp": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     }
     return registration_log
+
+def generate_microservice_log(log):
+    converted_log = {
+        'message_type' : 'REGISTRATION',
+        'node_id' : log['node_id'],
+        'service_name' : log['service_name'],
+        'timestamp' : datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    }
+    if log['message_type'] == "REGISTRATION":
+        converted_log['status'] = "UP"
+    if log['message_type'] == "LOG":
+        converted_log['status'] = "DOWN"
+
+    return converted_log
+
+
