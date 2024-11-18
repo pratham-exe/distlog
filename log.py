@@ -3,6 +3,11 @@ import random
 import uuid
 import datetime
 
+def random_log_level():
+    levels = ["INFO", "WARN", "ERROR"]
+    weights = [0.7, 0.2, 0.1]
+    return random.choices(levels, weights, k=1)[0]
+
 def generate_info_log(node_id, log_level, service_name, message):
     log = {
         "log_id": f"{node_id}_{uuid.uuid4()}",
@@ -47,9 +52,6 @@ def generate_error_log(node_id, log_level, service_name, message):
         "timestamp": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     }
     return log
-
-def random_log_level():
-    return random.choice(["INFO", "WARN", "ERROR"])
 
 def generate_registration_log(node_id, service_name):
     registration_log = {
