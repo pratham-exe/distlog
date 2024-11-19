@@ -6,7 +6,7 @@ import random
 import json
 import requests
 
-FLUENTD_URL = "http://localhost:9880/log.input"
+FLUENTD_URL = "http://192.168.126.128:9880/log.input"
 
 def main():
     node_id = "node_02"

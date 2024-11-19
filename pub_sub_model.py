@@ -51,6 +51,7 @@ for message in consumer:
             producer.send(topic_pub_2, message.value)
         if log_level == 'ERROR':
             producer.send(topic_pub_2, message.value)
+            producer.send(topic_pub_1, message.value)
             dereg_log = generate_microservice_log(message.value)
             producer.send(topic_pub_1, dereg_log)
             registered_nodes.remove(message.value['node_id'])
