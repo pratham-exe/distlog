@@ -5,7 +5,7 @@ import datetime
 
 def random_log_level():
     levels = ["INFO", "WARN", "ERROR"]
-    weights = [0.7, 0.2, 0.1]
+    weights = [0.8, 0.15, 0.05]
     return random.choices(levels, weights, k=1)[0]
 
 def generate_info_log(node_id, log_level, service_name, message):

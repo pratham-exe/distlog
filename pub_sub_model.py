@@ -55,6 +55,7 @@ for message in consumer:
             dereg_log = generate_microservice_log(message.value)
             producer.send(topic_pub_1, dereg_log)
             registered_nodes.remove(message.value['node_id'])
+            del node_heartbeats[node_id]
             continue
     
     producer.send(topic_pub_1, message.value)
